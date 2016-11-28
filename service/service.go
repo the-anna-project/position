@@ -2,7 +2,12 @@
 // connection space.
 package service
 
-import servicespec "github.com/the-anna-project/spec/service"
+import (
+	"strconv"
+	"strings"
+
+	servicespec "github.com/the-anna-project/spec/service"
+)
 
 // New creates a new position service.
 func New() servicespec.PositionService {
@@ -50,6 +55,19 @@ func (s *service) Create(peer string) (string, error) {
 	// TODO
 
 	var position string
+	{
+		nums, err := s.Service().Random().CreateNMax(s.dimensionCount, s.dimensionDepth)
+		if err != nil {
+			return "", maskAny(err)
+		}
+
+		coordinates := []string{}
+		for _, n := range nums {
+			coordinates = append(coordinates, strconv.Itoa(n))
+		}
+		position = strings.Join(coordinates, ",")
+	}
+
 	return position, nil
 }
 
