@@ -5,14 +5,16 @@ package service
 import servicespec "github.com/the-anna-project/spec/service"
 
 // New creates a new position service.
-func New() servicespec.PeerService {
+func New() servicespec.PositionService {
 	return &service{
 		// Dependencies.
 		serviceCollection: nil,
 
 		// Settings.
-		closer:   make(chan struct{}, 1),
-		metadata: map[string]string{},
+		closer:         make(chan struct{}, 1),
+		dimensionCount: 0,
+		dimensionDepth: 0,
+		metadata:       map[string]string{},
 	}
 }
 
@@ -23,8 +25,11 @@ type service struct {
 
 	// Settings.
 
-	closer   chan struct{}
-	metadata map[string]string
+	// TODO add Shutdown
+	closer         chan struct{}
+	dimensionCount int
+	dimensionDepth int
+	metadata       map[string]string
 }
 
 func (s *service) Boot() {
@@ -72,6 +77,14 @@ func (s *service) Search(peer string) (string, error) {
 
 func (s *service) Service() servicespec.ServiceCollection {
 	return s.serviceCollection
+}
+
+func (s *service) SetDimensionCount(dimensionCount int) {
+	s.dimensionCount = dimensionCount
+}
+
+func (s *service) SetDimensionDepth(dimensionDepth int) {
+	s.dimensionDepth = dimensionDepth
 }
 
 func (s *service) SetServiceCollection(sc servicespec.ServiceCollection) {
